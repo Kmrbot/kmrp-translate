@@ -18,6 +18,10 @@ class TranslatorBase:
         TranslatorBase._src_text.append(text)
 
     @classmethod
+    def get_all_text(cls):
+        return TranslatorBase._src_text
+
+    @classmethod
     def reset(cls):
         cls._source_language = ""
         cls._target_language = ""
