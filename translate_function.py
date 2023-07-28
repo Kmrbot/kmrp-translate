@@ -10,18 +10,22 @@ from nonebot.adapters.onebot.v11 import (
 )
 from .translator.translator_base import TranslatorBase
 from .translator.tencent_translator import TencentTranslator
+from .translator.youdao_translator import YouDaoTranslator
 
 
 class TranslatorType(Enum):
     """ 翻译器类型 """
     TRANSLATOR_NULL = 0,
     TRANSLATOR_TENCENT = 1,     # 腾讯翻译
+    TRANSLATOR_YOUDAO = 2,      # 有道翻译
 
 
 def get_translator(translator_type: TranslatorType) -> TranslatorBase:
     """ 获取翻译器 """
     if translator_type == TranslatorType.TRANSLATOR_TENCENT:
         return TencentTranslator()
+    elif translator_type == TranslatorType.TRANSLATOR_YOUDAO:
+        return YouDaoTranslator()
     else:
         logger.error(f"Invalid translator type ! type = {translator_type}")
         return TranslatorBase()

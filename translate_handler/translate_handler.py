@@ -44,7 +44,7 @@ async def _(
 ):
     # 获取当前的翻译器
     # 仅使用腾讯翻译
-    translator = get_translator(TranslatorType.TRANSLATOR_TENCENT)
+    translator = get_translator(TranslatorType.TRANSLATOR_YOUDAO)
 
     # 获取所有文本进行翻译
     for single_msg in event.message:

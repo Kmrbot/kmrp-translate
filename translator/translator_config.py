@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from nonebot.log import logger
 
+
 def get_translator_yaml_data():
     try:
         # 每次都重新加载 即可以动态重载 性能消耗可忽略
@@ -25,3 +26,13 @@ def get_tencent_translator_config():
         return {}
     else:
         return data.get("Tencent", {})
+
+
+def get_youdao_translator_config():
+    """ 获取有道翻译的配置 """
+    data = get_translator_yaml_data()
+    if data is None:
+        return {}
+    else:
+        return data.get("Youdao", {})
+
