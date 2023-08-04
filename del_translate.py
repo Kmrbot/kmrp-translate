@@ -31,4 +31,4 @@ async def _(event: GroupMessageEvent,
             type_id=event.group_id,
             target_user_id=target_user_id,
         )
-        await del_translate.finish(f"已删除QQ{target_user_id}的自动翻译功能")
+        await del_translate.finish(f"已删除QQ {target_user_id} 的自动翻译功能")

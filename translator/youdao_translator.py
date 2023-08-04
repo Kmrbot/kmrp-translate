@@ -59,4 +59,17 @@ class YouDaoTranslator(TranslatorBase):
         rsp_json = json.loads(response.text)
 
         super().reset()   # 清理
-        return [rsp_json["translation"][0]]
+
+        # 返回的是一个带回车的字符串 将其转换成数组
+        ret = []
+        translation_str = rsp_json["translation"][0]
+        start_pos = 0
+        enter_pos = translation_str.find("\n", start_pos)
+        while enter_pos != -1:
+            sub_str = translation_str[start_pos:enter_pos]
+            if len(sub_str) != 0:
+                ret.append(sub_str)
+            start_pos = enter_pos + 1
+            enter_pos = translation_str.find("\n", start_pos)
+        ret.append(translation_str[start_pos:])
+        return ret

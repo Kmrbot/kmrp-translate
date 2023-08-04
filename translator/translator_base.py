@@ -18,8 +18,11 @@ class TranslatorBase:
         TranslatorBase._src_text.append(text)
 
     @classmethod
-    def get_all_text(cls):
-        return TranslatorBase._src_text
+    def get_all_string_length(cls):
+        str_len = 0
+        for s in TranslatorBase._src_text:
+            str_len += len(s)
+        return str_len
 
     @classmethod
     def reset(cls):
