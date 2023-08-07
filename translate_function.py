@@ -1,5 +1,4 @@
-from typing import Type, Union
-from enum import Enum
+from typing import Union
 from nonebot.adapters.onebot.v11.event import PrivateMessageEvent
 from nonebot_plugin_guild_patch import GuildMessageEvent
 from nonebot.matcher import Matcher
@@ -11,13 +10,7 @@ from nonebot.adapters.onebot.v11 import (
 from .translator.translator_base import TranslatorBase
 from .translator.tencent_translator import TencentTranslator
 from .translator.youdao_translator import YouDaoTranslator
-
-
-class TranslatorType(Enum):
-    """ 翻译器类型 """
-    TRANSLATOR_NULL = 0,
-    TRANSLATOR_TENCENT = 1,     # 腾讯翻译
-    TRANSLATOR_YOUDAO = 2,      # 有道翻译
+from .translator_type import TranslatorType
 
 
 def get_translator(translator_type: TranslatorType) -> TranslatorBase:

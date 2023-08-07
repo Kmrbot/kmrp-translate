@@ -1,4 +1,5 @@
 import re
+from emoji import is_emoji
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot import on_message
 from nonebot.adapters import Event
@@ -39,6 +40,18 @@ async def is_translate_user(
 translate_handler.handle()(is_translate_user)
 
 
+def translate_text_preprocess(text):
+    """ 翻译字符预处理 """
+    # 1. 过滤url
+    text = re.sub("(http|www)[^ ]* *", " ", text)   # 正则匹配去掉网页链接
+    # 2. 去除emoji
+    for i in range(len(text)):
+        c = text[i]
+        if is_emoji(c):
+            text = text[:i] + "," + text[i + 1:]
+    return text
+
+
 @translate_handler.handle()
 async def _(
         event: GroupMessageEvent
@@ -50,9 +63,9 @@ async def _(
     for i in range(len(event.message)):
         single_msg = event.message[i]
         if single_msg.type == "text":
-            text = single_msg.data.get("text")
-            text = re.sub("(http|www)[^ ]* *", " ", text)   # 正则匹配去掉网页链接
-            if text is not None and text != " ":
+            text = single_msg.data.get("text", "")
+            text = translate_text_preprocess(text)
+            if len(text) != 0 and text != " ":
                 translator.add_text(str(text))
     if translator.get_all_string_length() == 0:
         # 没有内容可以翻译

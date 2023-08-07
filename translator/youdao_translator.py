@@ -6,6 +6,7 @@ import time
 from .translator_base import TranslatorBase
 from .translator_config import get_youdao_translator_config
 from .tencent_language_adjust import language_adjust
+from ..translator_type import TranslatorType
 
 
 def encrypt(sign_str):
@@ -40,7 +41,7 @@ class YouDaoTranslator(TranslatorBase):
             if i != 0:
                 query_str += "\n"
 
-        source_language, target_language = language_adjust(super()._src_text)
+        source_language, target_language = language_adjust(super()._src_text, TranslatorType.TRANSLATOR_YOUDAO)
 
         cur_time = str(int(time.time()))
         salt = str(uuid.uuid1())

@@ -1,4 +1,5 @@
 import json
+from nonebot.log import logger
 from tencentcloud.common import credential
 from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
 from tencentcloud.common.profile.client_profile import ClientProfile
@@ -7,7 +8,7 @@ from tencentcloud.tmt.v20180321 import tmt_client, models
 from .translator_base import TranslatorBase
 from .translator_config import get_tencent_translator_config
 from .tencent_language_adjust import language_adjust
-from nonebot.log import logger
+from ..translator_type import TranslatorType
 
 
 class TencentTranslator(TranslatorBase):
@@ -26,7 +27,7 @@ class TencentTranslator(TranslatorBase):
             client_profile.http_profile = http_profile
             client = tmt_client.TmtClient(cred, "ap-guangzhou", client_profile)
 
-            source_language, target_language = language_adjust(super()._src_text)
+            source_language, target_language = language_adjust(super()._src_text, TranslatorType.TRANSLATOR_TENCENT)
 
             req = models.TextTranslateBatchRequest()
             params = {
