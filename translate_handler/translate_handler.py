@@ -45,11 +45,16 @@ def translate_text_preprocess(text):
     # 1. 过滤url
     text = re.sub("(http|www)[^ ]* *", " ", text)   # 正则匹配去掉网页链接
     # 2. 去除emoji
+    ret_str = ""
     for i in range(len(text)):
         c = text[i]
         if is_emoji(c):
-            text = text[:i] + "," + text[i + 1:]
-    return text
+            if len(ret_str) != 0 and ret_str[-1] != ",":
+                # 如果有字符，且最后一个字符不是逗号，就加一个逗号
+                ret_str += ","
+        else:
+            ret_str += c
+    return ret_str
 
 
 @translate_handler.handle()
