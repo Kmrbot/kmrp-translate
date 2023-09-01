@@ -14,6 +14,7 @@ translate_handler = on_message(priority=5)
 
 translate_handler.handle()(while_list_handle("translate"))
 
+
 async def is_translate_user(
         event: GroupMessageEvent):
     if event.self_id == event.user_id:
@@ -51,7 +52,7 @@ async def _(
         event: GroupMessageEvent
 ):
     if not await is_translate_user(event):
-        translate_handler.finish()
+        await translate_handler.finish()
 
     # 获取当前的翻译器
     translator = get_translator(TranslatorType.TRANSLATOR_YOUDAO)

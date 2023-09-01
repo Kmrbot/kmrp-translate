@@ -5,12 +5,14 @@ from nonebot.params import ArgPlainText
 from plugins.common_plugins_function import permission_only_me
 from .db.translator_db_utils import TranslatorDBUtils
 from .translate_function import translator_only_group, get_user_id
+from plugins import while_list_handle
 
 add_translate = on_command("添加翻译",
                            rule=to_me(),
                            priority=5)
 add_translate.__doc__ = """添加翻译"""
 add_translate.__help_type__ = None
+add_translate.handle()(while_list_handle("translate"))
 add_translate.handle()(permission_only_me)
 add_translate.handle()(translator_only_group)
 add_translate.handle()(get_user_id)

@@ -5,12 +5,14 @@ from nonebot.params import ArgPlainText
 from plugins.common_plugins_function import permission_only_me
 from .db.translator_db_utils import TranslatorDBUtils
 from .translate_function import translator_only_group, get_user_id
+from plugins import while_list_handle
 
 del_translate = on_command("删除翻译",
                            rule=to_me(),
                            priority=5)
 del_translate.__doc__ = """删除翻译"""
 del_translate.__help_type__ = None
+del_translate.handle()(while_list_handle("translate"))
 del_translate.handle()(permission_only_me)
 del_translate.handle()(translator_only_group)
 del_translate.handle()(get_user_id)
