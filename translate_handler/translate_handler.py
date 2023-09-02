@@ -5,7 +5,7 @@ from nonebot import on_message
 from nonebot.adapters.onebot.v11 import (
     Message,
 )
-from plugins import while_list_handle
+from plugins.common_plugins_function import while_list_handle
 from nonebot.log import logger
 from ..translate_function import TranslatorType, get_translator
 from ..db.translator_db_utils import TranslatorDBUtils

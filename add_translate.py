@@ -2,10 +2,9 @@ from nonebot import on_command
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.rule import to_me
 from nonebot.params import ArgPlainText
-from plugins.common_plugins_function import permission_only_me
+from plugins.common_plugins_function import permission_only_me, while_list_handle
 from .db.translator_db_utils import TranslatorDBUtils
 from .translate_function import translator_only_group, get_user_id
-from plugins import while_list_handle
 
 add_translate = on_command("添加翻译",
                            rule=to_me(),
