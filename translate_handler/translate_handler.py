@@ -10,7 +10,7 @@ from nonebot.log import logger
 from ..translate_function import TranslatorType, get_translator
 from ..db.translator_db_utils import TranslatorDBUtils
 
-translate_handler = on_message(priority=5)
+translate_handler = on_message(priority=10)  # 调低相应级别
 
 translate_handler.handle()(while_list_handle("translate"))
 
