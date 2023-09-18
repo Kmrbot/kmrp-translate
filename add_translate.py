@@ -8,7 +8,8 @@ from .translate_function import translator_only_group, get_user_id
 
 add_translate = on_command("添加翻译",
                            rule=to_me(),
-                           priority=5)
+                           priority=5,
+                           block=True)
 add_translate.__doc__ = """添加翻译"""
 add_translate.__help_type__ = None
 add_translate.handle()(while_list_handle("translate"))
