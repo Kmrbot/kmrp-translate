@@ -33,11 +33,18 @@ async def is_translate_user(
 def translate_text_preprocess(text):
     """ 翻译字符预处理 """
     # 1. 过滤url
-    text = re.sub("(http|www)[^ ]*com *", " ", text)  # 正则匹配去掉网页链接
+    no_url_text = re.sub("(http|www)[^ ]* *", "", text)  # 正则匹配去掉网页链接
+    if no_url_text != text:
+        # 如果出现了url过滤 则直接返回空
+        return ""
+    text = no_url_text
     # 2. 去除emoji
     ret_str = ""
     for i in range(len(text)):
         c = text[i]
+        if c == "\u200d":
+            # 过滤零宽字符
+            continue
         if is_emoji(c):
             if len(ret_str) != 0 and ret_str[-1] != ",":
                 # 如果有字符，且最后一个字符不是逗号，就加一个逗号
