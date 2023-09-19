@@ -5,14 +5,14 @@ from nonebot import on_message
 from nonebot.adapters.onebot.v11 import (
     Message,
 )
-from plugins.common_plugins_function import while_list_handle
+from plugins.common_plugins_function import white_list_handle
 from nonebot.log import logger
 from ..translate_function import TranslatorType, get_translator
 from ..db.translator_db_utils import TranslatorDBUtils
 
 translate_handler = on_message(priority=10)  # 调低相应级别
 
-translate_handler.handle()(while_list_handle("translate"))
+translate_handler.handle()(white_list_handle("translate"))
 
 
 async def is_translate_user(

@@ -2,7 +2,7 @@ from nonebot import on_command
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.rule import to_me
 from nonebot.params import ArgPlainText
-from plugins.common_plugins_function import permission_only_me, while_list_handle
+from plugins.common_plugins_function import permission_only_me, white_list_handle
 from .db.translator_db_utils import TranslatorDBUtils
 from .translate_function import translator_only_group, get_user_id
 
@@ -11,7 +11,7 @@ get_translate_list = on_command("获取翻译列表",
                                 priority=5)
 get_translate_list.__doc__ = """获取翻译列表"""
 get_translate_list.__help_type__ = None
-get_translate_list.handle()(while_list_handle("translate"))
+get_translate_list.handle()(white_list_handle("translate"))
 get_translate_list.handle()(permission_only_me)
 get_translate_list.handle()(translator_only_group)
 get_translate_list.handle()(get_user_id)
