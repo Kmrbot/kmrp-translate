@@ -33,7 +33,7 @@ async def is_translate_user(
 def translate_text_preprocess(text):
     """ 翻译字符预处理 """
     # 1. 过滤url
-    no_url_text = re.sub(r"(https?://|\w+.\w+.\w+)[^ ]* *", "", text)  # 正则匹配去掉网页链接
+    no_url_text = re.sub(r"(https?://|\w+\.\w+\.\w+)[^ ]* *", "", text)  # 正则匹配去掉网页链接
     if no_url_text != text:
         # 如果出现了url过滤 则直接返回空
         return ""
