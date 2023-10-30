@@ -1,10 +1,12 @@
 from nonebot import on_command
-from nonebot.adapters.onebot.v11.event import GroupMessageEvent
+from protocol_adapter.protocol_adapter import ProtocolAdapter
+from protocol_adapter.adapter_type import AdapterGroupMessageEvent
 from nonebot.rule import to_me
 from nonebot.params import ArgPlainText
-from plugins.common_plugins_function import permission_only_me, white_list_handle
-from .db.translator_db_utils import TranslatorDBUtils
+from plugins.common_plugins_function import white_list_handle
+from .database.translate_info import DBPluginsTranslateInfo
 from .translate_function import translator_only_group, get_user_id
+from utils.permission import only_me
 
 del_translate = on_command("删除翻译",
                            rule=to_me(),
@@ -12,24 +14,18 @@ del_translate = on_command("删除翻译",
 del_translate.__doc__ = """删除翻译"""
 del_translate.__help_type__ = None
 del_translate.handle()(white_list_handle("translate"))
-del_translate.handle()(permission_only_me)
+del_translate.handle()(only_me)
 del_translate.handle()(translator_only_group)
 del_translate.handle()(get_user_id)
 
 
 @del_translate.handle()
-async def _(event: GroupMessageEvent,
+async def _(event: AdapterGroupMessageEvent,
             target_user_id: str = ArgPlainText("target_user_id")):
-    if await TranslatorDBUtils.get_translator_data(
-        type=event.message_type,
-        type_id=event.group_id,
-        target_user_id=target_user_id,
-    ) is None:
+    msg_type = ProtocolAdapter.get_msg_type(event)
+    msg_type_id = ProtocolAdapter.get_msg_type_id(event)
+    if not DBPluginsTranslateInfo.is_translate(msg_type, msg_type_id, target_user_id):
         await del_translate.finish("尚未添加过该用户的翻译功能")
     else:
-        await TranslatorDBUtils.del_translator_data(
-            type=event.message_type,
-            type_id=event.group_id,
-            target_user_id=target_user_id,
-        )
+        DBPluginsTranslateInfo.del_translate(msg_type, msg_type_id, target_user_id)
         await del_translate.finish(f"已删除QQ {target_user_id} 的自动翻译功能")

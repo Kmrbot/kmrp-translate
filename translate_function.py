@@ -1,12 +1,8 @@
 from typing import Union
-from nonebot.adapters.onebot.v11.event import PrivateMessageEvent
-from nonebot_plugin_guild_patch import GuildMessageEvent
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import (
-    Message,
-)
+from protocol_adapter.adapter_type import AdapterMessage, AdapterPrivateMessageEvent
 from .translator.translator_base import TranslatorBase
 from .translator.tencent_translator import TencentTranslator
 from .translator.youdao_translator import YouDaoTranslator
@@ -24,18 +20,18 @@ def get_translator(translator_type: TranslatorType) -> TranslatorBase:
         return TranslatorBase()
 
 
-def get_user_id(
+async def get_user_id(
     matcher: Matcher,
-    command_arg: Message = CommandArg(),
+    command_arg: AdapterMessage = CommandArg(),
 ):
     target_user_id = command_arg.extract_plain_text().strip()
     if target_user_id and target_user_id.isdecimal():
         matcher.set_arg("target_user_id", command_arg)
     else:
-        matcher.finish("UserID必须为纯数字")
+        await matcher.finish("UserID必须为纯数字")
 
 
-def translator_only_group(
+async def translator_only_group(
         matcher: Matcher,
-        event: Union[PrivateMessageEvent, GuildMessageEvent]):
-    matcher.finish("只有群里才可以使用翻译功能")
+        event: Union[AdapterPrivateMessageEvent]):
+    await matcher.finish("只有群里才可以使用翻译功能")
