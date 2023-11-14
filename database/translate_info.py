@@ -36,7 +36,7 @@ class DBPluginsTranslateInfo(DBImplInterface):
     @classmethod
     def clear_translate_by_msg_type_id(cls, msg_type, msg_type_id):
         """ 根据msg_type和msg_type_id 清空翻译信息 """
-        for key, data in copy.deepcopy(cls.get_data().items()):
+        for key, data in copy.deepcopy(cls.get_data()).items():
             key_info = cls.analysis_key(key)
             if key_info["msg_type"] == msg_type and key_info["msg_type_id"] == msg_type_id:
                 cls.del_data(key)

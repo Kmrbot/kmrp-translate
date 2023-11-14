@@ -1,14 +1,14 @@
 import yaml
 import yaml.scanner
-import os
-from pathlib import Path
 from nonebot.log import logger
+from utils import get_config_path
 
 
 def get_translator_yaml_data():
     try:
         # 每次都重新加载 即可以动态重载 性能消耗可忽略
-        with open(Path(os.path.dirname(__file__)).joinpath("translator_config.yaml"), "r", encoding="utf8") as file:
+        with open(get_config_path().joinpath("translate/translator_config.yaml"), "r", encoding="utf8") \
+                as file:
             data = yaml.safe_load(file)
     except FileNotFoundError:
         logger.error("get_translator_yaml_data fail ! File not found !")
