@@ -1,5 +1,6 @@
 import re
-from emoji import is_emoji
+
+import emoji
 from nonebot import on_message
 from protocol_adapter.adapter_type import AdapterBot, AdapterGroupMessageEvent
 from protocol_adapter.protocol_adapter import ProtocolAdapter
@@ -13,7 +14,7 @@ translate_handler = on_message(priority=10)  # 调低相应级别
 translate_handler.handle()(white_list_handle("translate"))
 
 
-async def is_translate_user(
+def is_translate_user(
         bot: AdapterBot,
         event: AdapterGroupMessageEvent):
     if ProtocolAdapter.get_bot_id(bot) == ProtocolAdapter.get_user_id(event):
@@ -29,27 +30,20 @@ async def is_translate_user(
 
 def translate_text_preprocess(text):
     """ 翻译字符预处理 """
+    text = text.lstrip()
     # 过滤url
-
-    no_url_text = re.sub(r"(https?://|\w+\.\w+\.\w+)[^ ]* *", "", text)  # 正则匹配去掉网页链接
-    if no_url_text != text:
-        # 如果出现了url过滤 则直接返回空
-        return ""
-    text = no_url_text
     # 过滤emoji
-    ret_str = ""
-    for i in range(len(text)):
-        c = text[i]
-        if c == "\u200d" or c == "\ufe0f":
-            # 过滤零宽字符
-            continue
-        if is_emoji(c):
-            if len(ret_str) != 0 and ret_str[-1] != ",":
-                # 如果有字符，且最后一个字符不是逗号，就加一个逗号
-                ret_str += ","
-        else:
-            ret_str += c
-    return ret_str
+    text = emoji.replace_emoji(text, "")
+    # 过滤零宽字符
+    zero_width_character_regex = r"[" \
+                                 u"\U0000200a" \
+                                 u"\U0000200b" \
+                                 r"]"
+    text = re.sub(zero_width_character_regex, "", text)
+    if re.sub(r"(https?://|\w+\.\w+\.\w+)[^ ]* *", "", text) != text:
+        # 如果网页链接出现了url过滤 则直接返回空
+        return ""
+    return text
 
 
 @translate_handler.handle()
@@ -57,7 +51,7 @@ async def _(
         bot: AdapterBot,
         event: AdapterGroupMessageEvent
 ):
-    if not await is_translate_user(bot, event):
+    if not is_translate_user(bot, event):
         await translate_handler.finish()
 
     # 获取当前的翻译器
