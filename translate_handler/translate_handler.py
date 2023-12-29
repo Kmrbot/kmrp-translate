@@ -4,14 +4,10 @@ import emoji
 from nonebot import on_message
 from protocol_adapter.adapter_type import AdapterBot, AdapterGroupMessageEvent
 from protocol_adapter.protocol_adapter import ProtocolAdapter
-from plugins.common_plugins_function import white_list_handle
+from utils.permission import white_list_handle
 from nonebot.log import logger
 from ..translate_function import TranslatorType, get_translator
 from ..database.translate_info import DBPluginsTranslateInfo
-
-translate_handler = on_message(priority=10)  # 调低相应级别
-
-translate_handler.handle()(white_list_handle("translate"))
 
 
 def is_translate_user(
@@ -20,12 +16,16 @@ def is_translate_user(
     if ProtocolAdapter.get_bot_id(bot) == ProtocolAdapter.get_user_id(event):
         # 如果发消息的和机器人是同一个号 就断掉
         # 机器人是不会处理自己给自己发的消息的好像
-        logger.error("is_translate_user fail")
         return False
     # 看当前群和说话人是不是对应的
     msg_type = ProtocolAdapter.get_msg_type(event)
     msg_type_id = ProtocolAdapter.get_msg_type_id(event)
     return DBPluginsTranslateInfo.is_translate(msg_type, msg_type_id, ProtocolAdapter.get_user_id(event))
+
+
+translate_handler = on_message(priority=10, rule=is_translate_user)  # 调低相应级别
+
+translate_handler.handle()(white_list_handle("translate"))
 
 
 def translate_text_preprocess(text):
@@ -51,9 +51,6 @@ async def _(
         bot: AdapterBot,
         event: AdapterGroupMessageEvent
 ):
-    if not is_translate_user(bot, event):
-        await translate_handler.finish()
-
     # 获取当前的翻译器
     translator = get_translator(TranslatorType.TRANSLATOR_YOUDAO)
 

@@ -3,10 +3,10 @@ from protocol_adapter.protocol_adapter import ProtocolAdapter
 from protocol_adapter.adapter_type import AdapterGroupMessageEvent
 from nonebot.rule import to_me
 from nonebot.params import ArgPlainText
-from plugins.common_plugins_function import white_list_handle
 from .database.translate_info import DBPluginsTranslateInfo
 from .translate_function import translator_only_group, get_user_id
-from utils.permission import only_me
+from utils.permission import white_list_handle, only_me
+
 
 get_translate_list = on_command("翻译列表",
                                 rule=to_me(),
@@ -14,8 +14,8 @@ get_translate_list = on_command("翻译列表",
 get_translate_list.__doc__ = """翻译列表"""
 get_translate_list.__help_type__ = None
 get_translate_list.handle()(white_list_handle("translate"))
-get_translate_list.handle()(only_me)
 get_translate_list.handle()(translator_only_group)
+get_translate_list.handle()(only_me)
 
 
 @get_translate_list.handle()

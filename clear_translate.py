@@ -2,10 +2,10 @@ from nonebot import on_command
 from protocol_adapter.protocol_adapter import ProtocolAdapter
 from protocol_adapter.adapter_type import AdapterGroupMessageEvent
 from nonebot.rule import to_me
-from plugins.common_plugins_function import white_list_handle
+from utils.permission import only_me, white_list_handle
 from .database.translate_info import DBPluginsTranslateInfo
 from .translate_function import translator_only_group
-from utils.permission import only_me
+
 
 clear_translate = on_command("清空翻译",
                              rule=to_me(),
@@ -13,8 +13,8 @@ clear_translate = on_command("清空翻译",
 clear_translate.__doc__ = """清空翻译"""
 clear_translate.__help_type__ = None
 clear_translate.handle()(white_list_handle("translate"))
-clear_translate.handle()(only_me)
 clear_translate.handle()(translator_only_group)
+clear_translate.handle()(only_me)
 
 
 @clear_translate.handle()
