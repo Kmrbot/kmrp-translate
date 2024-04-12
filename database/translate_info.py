@@ -1,11 +1,11 @@
 import copy
 import re
-from database.interface.db_impl_interface import DBImplInterface
+from database.interface.db_impl_interface import DBCacheImplInterface
 from database.db_manager import DBManager
 
 
 # B站翻译信息
-class DBPluginsTranslateInfo(DBImplInterface):
+class DBPluginsTranslateInfo(DBCacheImplInterface):
 
     """
     key: {msg_type}_{msg_type_id}_{user_id}
@@ -25,7 +25,7 @@ class DBPluginsTranslateInfo(DBImplInterface):
         """ 添加翻译 """
         key = cls.generate_key(msg_type, msg_type_id, user_id)
         data = copy.deepcopy(cls._default_value)
-        cls.set_data(key, data)
+        cls.set_data_by_key(key, data)
 
     @classmethod
     def del_translate(cls, msg_type, msg_type_id, user_id):
