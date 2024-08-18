@@ -53,7 +53,7 @@ async def _(
 ):
     # 获取当前的翻译器
     translator = get_translator(TranslatorType.TRANSLATOR_YOUDAO)
-
+    translator.reset() # 清理
     # 获取所有文本进行翻译
     for text in ProtocolAdapter.get_text(event):
         text = translate_text_preprocess(text)

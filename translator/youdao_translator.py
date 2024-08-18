@@ -59,8 +59,6 @@ class YouDaoTranslator(TranslatorBase):
         response = do_request(url, data)
         rsp_json = json.loads(response.text)
 
-        super().reset()   # 清理
-
         # 返回的是一个带回车的字符串 将其转换成数组
         ret = []
         translation_str = rsp_json["translation"][0]
