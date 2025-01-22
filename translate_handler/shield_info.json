@@ -1,0 +1,12 @@
+{
+    "shield_words": [
+      {
+          "reg": "(https?://|\\w+\\.\\w+\\.\\w+)[^ ]* *",
+          "shield_type": "SHIELD_TYPE_SKIP"
+      },
+      {
+          "reg": "请使用QQ最新版本",
+          "shield_type": "SHIELD_TYPE_SKIP"
+      }
+    ]
+}

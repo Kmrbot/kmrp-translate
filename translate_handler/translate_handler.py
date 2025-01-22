@@ -1,3 +1,5 @@
+import json
+import os
 import re
 
 import emoji
@@ -40,9 +42,21 @@ def translate_text_preprocess(text):
                                  u"\U0000200b" \
                                  r"]"
     text = re.sub(zero_width_character_regex, "", text)
-    if re.sub(r"(https?://|\w+\.\w+\.\w+)[^ ]* *", "", text) != text:
-        # 如果网页链接出现了url过滤 则直接返回空
-        return ""
+
+    # 拿所有屏蔽信息
+    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "shield_info.json"), encoding="utf-8") as f:
+        try:
+            shield_info = json.load(f)
+            for single_shield_info in shield_info["shield_words"]:
+                if re.sub(single_shield_info["reg"], "", text) != text:
+                    match single_shield_info["shield_type"]:
+                        case "SHIELD_TYPE_SKIP":
+                            return ""
+                        case _:
+                            logger.error(f"Invalid shield_type! shield_type = {single_shield_info['shield_type']}")
+                            return ""
+        except Exception as e:
+            logger.error(f"check shield info exception {e} !")
     return text
 
 
