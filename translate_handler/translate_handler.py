@@ -1,14 +1,9 @@
-import json
-import os
-import re
-
-import emoji
 from nonebot import on_message
 from protocol_adapter.adapter_type import AdapterBot, AdapterGroupMessageEvent
 from protocol_adapter.protocol_adapter import ProtocolAdapter
 from utils.permission import white_list_handle
-from nonebot.log import logger
-from ..translate_function import TranslatorType, get_translator
+from ..translate_function import get_translate_result, get_translator, translate_text_preprocess
+from ..translator_type import TranslatorType
 from ..database.translate_info import DBPluginsTranslateInfo
 
 
@@ -30,39 +25,8 @@ translate_handler = on_message(priority=10, rule=is_translate_user)  # 调低相
 translate_handler.handle()(white_list_handle("translate"))
 
 
-def translate_text_preprocess(text):
-    """ 翻译字符预处理 """
-    text = text.lstrip()
-    # 过滤url
-    # 过滤emoji
-    text = emoji.replace_emoji(text, "")
-    # 过滤零宽字符
-    zero_width_character_regex = r"[" \
-                                 u"\U0000200a" \
-                                 u"\U0000200b" \
-                                 r"]"
-    text = re.sub(zero_width_character_regex, "", text)
-
-    # 拿所有屏蔽信息
-    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "shield_info.json"), encoding="utf-8") as f:
-        try:
-            shield_info = json.load(f)
-            for single_shield_info in shield_info["shield_words"]:
-                if re.sub(single_shield_info["reg"], "", text) != text:
-                    match single_shield_info["shield_type"]:
-                        case "SHIELD_TYPE_SKIP":
-                            return ""
-                        case _:
-                            logger.error(f"Invalid shield_type! shield_type = {single_shield_info['shield_type']}")
-                            return ""
-        except Exception as e:
-            logger.error(f"check shield info exception {e} !")
-    return text
-
-
 @translate_handler.handle()
 async def _(
-        bot: AdapterBot,
         event: AdapterGroupMessageEvent
 ):
     # 获取当前的翻译器
@@ -73,22 +37,9 @@ async def _(
         text = translate_text_preprocess(text)
         if len(text) != 0 and text != " ":
             translator.add_text(str(text))
-    if translator.get_all_string_length() == 0:
-        # 没有内容可以翻译
+    translate_msg = await get_translate_result(translator)
+    if translate_msg is None:
         await translate_handler.finish()
     else:
-        target_str_list = translator.translate()
-        if target_str_list is None:
-            logger.error("translate_handler error ! target_str_list is None !")
-            await translate_handler.finish()
-
-        translate_msg = ProtocolAdapter.MS.text("翻译:\n")
-        translate_str = ""
-        for i in range(len(target_str_list)):
-            if i != 0:
-                # 如果已经有字符串了 就加一个回车
-                translate_str += "\n"
-            translate_str += target_str_list[i]
-        translate_msg += ProtocolAdapter.MS.text(translate_str)
-        msg = ProtocolAdapter.MS.reply(event) + translate_msg
+        msg = ProtocolAdapter.MS.reply(event) + ProtocolAdapter.MS.text(f"翻译:\n{translate_msg}")
         await translate_handler.finish(msg)
