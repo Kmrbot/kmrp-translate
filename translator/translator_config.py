@@ -1,7 +1,7 @@
 import yaml
 import yaml.scanner
 from nonebot.log import logger
-from utils import get_config_path
+from utils.paths import get_config_path
 
 
 def get_translator_yaml_data():
