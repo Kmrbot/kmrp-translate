@@ -1,13 +1,14 @@
 import yaml
 import yaml.scanner
 from nonebot.log import logger
-from utils.paths import get_config_path
+from utils.config import ensure_bot_data_config_dirs, get_plugin_config_path
 
 
 def get_translator_yaml_data():
     try:
         # 每次都重新加载 即可以动态重载 性能消耗可忽略
-        with open(get_config_path().joinpath("translate/translator_config.yaml"), "r", encoding="utf8") \
+        ensure_bot_data_config_dirs()
+        with open(get_plugin_config_path("kmrp-translate", "translator_config.yaml"), "r", encoding="utf8") \
                 as file:
             data = yaml.safe_load(file)
     except FileNotFoundError:
@@ -35,4 +36,3 @@ def get_youdao_translator_config():
         return {}
     else:
         return data.get("Youdao", {})
-

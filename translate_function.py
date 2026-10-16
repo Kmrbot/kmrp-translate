@@ -1,17 +1,20 @@
 import json
-import os
 import re
 import emoji
+from pathlib import Path
 from typing import Union
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
 from nonebot.log import logger
 from protocol_adapter.adapter_type import AdapterMessage, AdapterPrivateMessageEvent, AdapterGroupMessageEvent
 from protocol_adapter.protocol_adapter import ProtocolAdapter
+from utils.config import ensure_plugin_config_from_template
 from .translator.translator_base import TranslatorBase
 from .translator.tencent_translator import TencentTranslator
 from .translator.youdao_translator import YouDaoTranslator
 from .translator_type import TranslatorType
+
+__SHIELD_INFO_TEMPLATE_PATH = Path(__file__).resolve().parent / "shield_info" / "shield_info_template.json"
 
 
 def get_translator(translator_type: TranslatorType) -> TranslatorBase:
@@ -39,7 +42,12 @@ def translate_text_preprocess(text):
     text = re.sub(zero_width_character_regex, "", text)
 
     # 拿所有屏蔽信息
-    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "shield_info/shield_info.json"), encoding="utf-8") as f:
+    shield_path = ensure_plugin_config_from_template(
+        "kmrp-translate",
+        "shield_info.json",
+        __SHIELD_INFO_TEMPLATE_PATH,
+    )
+    with open(shield_path, encoding="utf-8") as f:
         try:
             shield_info = json.load(f)
             for single_shield_info in shield_info["shield_words"]:
