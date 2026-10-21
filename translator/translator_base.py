@@ -30,7 +30,7 @@ class TranslatorBase:
         cls._target_language = ""
         cls._src_text.clear()
 
-    def translate(self) -> str:
+    async def translate(self) -> str:
         pass
 
     _source_language: str = ""

@@ -6,7 +6,6 @@ from protocol_adapter.adapter_type import AdapterMessageEvent
 from nonebot.log import logger
 from nonebot.rule import to_me
 from .translate_function import get_translate_result, get_translator, translate_text_preprocess
-from .translator_type import TranslatorType
 from utils.permission import white_list_handle
 
 force_translate = on_command("机翻",
@@ -21,7 +20,7 @@ force_translate.handle()(white_list_handle("translate"))
 @force_translate.handle()
 async def _(event: AdapterMessageEvent):
     # 获取当前的翻译器
-    translator = get_translator(TranslatorType.TRANSLATOR_YOUDAO)
+    translator = get_translator()
     translator.reset()  # 清理
     # 获取所有文本进行翻译 第一个机翻需要去除
     for text in ProtocolAdapter.get_text(event):
@@ -35,5 +34,10 @@ async def _(event: AdapterMessageEvent):
             translator.add_text(text)
 
     translate_msg = await get_translate_result(translator)
+    if translate_msg is None:
+        await force_translate.finish(ProtocolAdapter.MS.reply(event) +
+                                     ProtocolAdapter.MS.text("机翻：{无可机翻内容}"))
+    if translate_msg == "=":
+        await force_translate.finish()
     await force_translate.finish(ProtocolAdapter.MS.reply(event) +
-                                 ProtocolAdapter.MS.text(f"机翻：{'{无可机翻内容}' if translate_msg is None else translate_msg}"))
+                                 ProtocolAdapter.MS.text(f"机翻：{translate_msg}"))

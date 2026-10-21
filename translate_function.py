@@ -9,22 +9,27 @@ from nonebot.log import logger
 from protocol_adapter.adapter_type import AdapterMessage, AdapterPrivateMessageEvent, AdapterGroupMessageEvent
 from protocol_adapter.protocol_adapter import ProtocolAdapter
 from utils.config import ensure_plugin_config_from_template
+from .translate_config import TranslateConfig
+from .translator.ai_translator import AITranslator
 from .translator.translator_base import TranslatorBase
 from .translator.tencent_translator import TencentTranslator
 from .translator.youdao_translator import YouDaoTranslator
-from .translator_type import TranslatorType
 
 __SHIELD_INFO_TEMPLATE_PATH = Path(__file__).resolve().parent / "shield_info" / "shield_info_template.json"
 
 
-def get_translator(translator_type: TranslatorType) -> TranslatorBase:
-    """ 获取翻译器 """
-    if translator_type == TranslatorType.TRANSLATOR_TENCENT:
+def get_translator() -> TranslatorBase:
+    """按 translate_config.json 选择翻译器。translator 为 ai 时把 model 传给 AITranslator。"""
+    config = TranslateConfig.load()
+    tool = config["translator"]
+    if tool == "ai":
+        return AITranslator(config["model"])
+    elif tool == "tencent":
         return TencentTranslator()
-    elif translator_type == TranslatorType.TRANSLATOR_YOUDAO:
+    elif tool == "youdao":
         return YouDaoTranslator()
     else:
-        logger.error(f"Invalid translator type ! type = {translator_type}")
+        logger.error(f"Invalid translator type ! type = {tool}")
         return TranslatorBase()
 
 
@@ -64,11 +69,17 @@ def translate_text_preprocess(text):
 
 
 async def get_translate_result(translator: TranslatorBase) -> str | None:
+    """
+    翻译已经加入的文本。
+
+    :param translator: 已 reset 并 add_text 的翻译器
+    :return: 译文。没有可译内容或翻译失败时为 None。译文与原文相同时为 =
+    """
     if translator.get_all_string_length() == 0:
         # 没有内容可以翻译
         return None
     else:
-        target_str_list = translator.translate()
+        target_str_list = await translator.translate()
         if target_str_list is None:
             logger.error("translate_handler error ! target_str_list is None !")
             return None

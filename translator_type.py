@@ -6,3 +6,4 @@ class TranslatorType(Enum):
     TRANSLATOR_NULL = 0,
     TRANSLATOR_TENCENT = 1,     # 腾讯翻译
     TRANSLATOR_YOUDAO = 2,      # 有道翻译
+    TRANSLATOR_AI_DEEPSEEK = 3,  # DeepSeek

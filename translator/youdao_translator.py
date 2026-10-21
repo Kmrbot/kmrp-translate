@@ -29,7 +29,7 @@ def do_request(url, data):
 
 class YouDaoTranslator(TranslatorBase):
     """ 有道翻译 """
-    def translate(self):
+    async def translate(self):
         youdao_translator_config = get_youdao_translator_config()
         url = youdao_translator_config.get("url")
         app_key = youdao_translator_config.get("app_key")

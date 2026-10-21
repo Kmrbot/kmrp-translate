@@ -3,7 +3,6 @@ from protocol_adapter.adapter_type import AdapterBot, AdapterGroupMessageEvent
 from protocol_adapter.protocol_adapter import ProtocolAdapter
 from utils.permission import white_list_handle
 from ..translate_function import get_translate_result, get_translator, translate_text_preprocess
-from ..translator_type import TranslatorType
 from ..database.translate_info import DBPluginsTranslateInfo
 
 
@@ -30,7 +29,7 @@ async def _(
         event: AdapterGroupMessageEvent
 ):
     # 获取当前的翻译器
-    translator = get_translator(TranslatorType.TRANSLATOR_YOUDAO)
+    translator = get_translator()
     translator.reset()  # 清理
     # 获取所有文本进行翻译
     for text in ProtocolAdapter.get_text(event):
@@ -38,7 +37,7 @@ async def _(
         if len(text) != 0 and text != " ":
             translator.add_text(str(text))
     translate_msg = await get_translate_result(translator)
-    if translate_msg is None:
+    if translate_msg is None or translate_msg == "=":
         await translate_handler.finish()
     else:
         msg = ProtocolAdapter.MS.reply(event) + ProtocolAdapter.MS.text(f"翻译:\n{translate_msg}")

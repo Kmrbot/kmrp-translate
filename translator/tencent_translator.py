@@ -13,7 +13,7 @@ from ..translator_type import TranslatorType
 
 class TencentTranslator(TranslatorBase):
     """ 腾讯翻译 """
-    def translate(self):
+    async def translate(self):
         try:
             tencent_translator_config = get_tencent_translator_config()
             secret_id = tencent_translator_config.get("secret_id")
