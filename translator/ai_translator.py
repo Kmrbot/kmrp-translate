@@ -1,5 +1,3 @@
-from typing import Final
-
 from nonebot.log import logger
 
 from utils.ai.chat import AIChat
@@ -11,21 +9,15 @@ from .translator_base import TranslatorBase
 class AITranslator(TranslatorBase):
     """用已配置的一种 AI 做日中对译。每次请求只有系统提示和一条原文。"""
 
-    __PROMPT: Final[str] = (
-        "1.仅在回答中写出翻译的内容即可，不要掺杂任何其他信息；"
-        "发的什么就翻译什么，有错误，模棱两可的词，也尽可能猜出意思。\n"
-        "2.发现是日语就翻译成中文，发现是中文就翻译成日语。"
-        "如果是纯汉字，则看一下是不是日语形式的纯汉字；"
-        "如果翻译内容和原内容相同，则返回一个 = 即可。"
-    )
-
-    def __init__(self, model_name: str) -> None:
+    def __init__(self, model_name: str, prompt: str) -> None:
         """
         本次待译文本。每条消息单独一个实例，避免并发时互相覆盖。
 
         :param model_name: ai_config.json 里的类型名，例如 deepseek
+        :param prompt: 系统提示，来自 translate_config.json 的 ai.prompt
         """
         self.__model_name: str = model_name
+        self.__prompt: str = prompt
         self.__texts: list[str] = []
 
     def reset(self) -> None:
@@ -63,7 +55,7 @@ class AITranslator(TranslatorBase):
             logger.error(f"AITranslator fail ! {self.__model_name} not configured")
             return None
         content, err = await AIChat(item).complete([
-            {"role": "system", "content": self.__PROMPT},
+            {"role": "system", "content": self.__prompt},
             {"role": "user", "content": source},
         ])
         if err or not content.strip():

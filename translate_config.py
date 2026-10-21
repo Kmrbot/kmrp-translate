@@ -5,13 +5,22 @@ from typing import Final, TypedDict
 from utils.config import ensure_plugin_config_from_template
 
 
+class TranslateAIConfig(TypedDict):
+    """translator 为 ai 时使用的配置。其他翻译工具不读这段。"""
+
+    model: str
+    """ai_config.json 里的类型名，例如 deepseek。"""
+    prompt: str
+    """发给模型的系统提示。每次翻译只附带这一段和一条原文。"""
+
+
 class TranslateRuntimeConfig(TypedDict):
     """kmrp-translate 的运行时配置。"""
 
     translator: str
     """当前翻译工具：youdao、tencent、ai。"""
-    model: str
-    """translator 为 ai 时使用的模型类型名，例如 deepseek。其他工具不读这个字段。"""
+    ai: TranslateAIConfig
+    """AI 翻译的模型和提示词。"""
 
 
 class TranslateConfig:
@@ -24,13 +33,17 @@ class TranslateConfig:
     @classmethod
     def load(cls) -> TranslateRuntimeConfig:
         """
-        读取当前翻译工具和模型。
+        读取当前翻译工具，以及 AI 使用的模型和提示词。
 
-        :return: translator 为 youdao、tencent 或 ai；model 仅在 ai 时使用
+        :return: translator 为 youdao、tencent 或 ai；ai 仅在 translator 为 ai 时使用
         """
         path = ensure_plugin_config_from_template(cls.__PLUGIN, cls.__FILENAME, cls.__TEMPLATE)
         data = json.loads(path.read_text(encoding="utf-8"))
+        ai = data["ai"]
         return {
             "translator": data["translator"],
-            "model": data["model"],
+            "ai": {
+                "model": ai["model"],
+                "prompt": ai["prompt"],
+            },
         }
