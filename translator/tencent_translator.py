@@ -6,20 +6,24 @@ from tencentcloud.common.profile.client_profile import ClientProfile
 from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.tmt.v20180321 import tmt_client, models
 from .translator_base import TranslatorBase
-from .translator_config import get_tencent_translator_config
 from .tencent_language_adjust import language_adjust
+from ..translate_config import TranslateTencentConfig
 from ..translator_type import TranslatorType
 
 
 class TencentTranslator(TranslatorBase):
     """ 腾讯翻译 """
+
+    def __init__(self, config: TranslateTencentConfig) -> None:
+        """
+        :param config: translate_config.json 里 tencent 段
+        """
+        self.__secret_id: str = config["secret_id"]
+        self.__secret_key: str = config["secret_key"]
+
     async def translate(self):
         try:
-            tencent_translator_config = get_tencent_translator_config()
-            secret_id = tencent_translator_config.get("secret_id")
-            secret_key = tencent_translator_config.get("secret_key")
-
-            cred = credential.Credential(secret_id, secret_key)
+            cred = credential.Credential(self.__secret_id, self.__secret_key)
             http_profile = HttpProfile()
             http_profile.endpoint = "tmt.tencentcloudapi.com"
 

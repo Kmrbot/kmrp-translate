@@ -4,20 +4,20 @@ from utils.ai.chat import AIChat
 from utils.config import AIConfig
 
 from .translator_base import TranslatorBase
+from ..translate_config import TranslateAIConfig
 
 
 class AITranslator(TranslatorBase):
     """用已配置的一种 AI 做日中对译。每次请求只有系统提示和一条原文。"""
 
-    def __init__(self, model_name: str, prompt: str) -> None:
+    def __init__(self, config: TranslateAIConfig) -> None:
         """
         本次待译文本。每条消息单独一个实例，避免并发时互相覆盖。
 
-        :param model_name: ai_config.json 里的类型名，例如 deepseek
-        :param prompt: 系统提示，来自 translate_config.json 的 ai.prompt
+        :param config: translate_config.json 里 ai 段，含 model 与 prompt
         """
-        self.__model_name: str = model_name
-        self.__prompt: str = prompt
+        self.__model_name: str = config["model"]
+        self.__prompt: str = config["prompt"]
         self.__texts: list[str] = []
 
     def reset(self) -> None:

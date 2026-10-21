@@ -19,15 +19,15 @@ __SHIELD_INFO_TEMPLATE_PATH = Path(__file__).resolve().parent / "shield_info" / 
 
 
 def get_translator() -> TranslatorBase:
-    """按 translate_config.json 选择翻译器。translator 为 ai 时使用 ai.model 和 ai.prompt。"""
+    """按 translator 取出同名配置段，整段交给对应翻译类。"""
     config = TranslateConfig.load()
     tool = config["translator"]
     if tool == "ai":
-        return AITranslator(config["ai"]["model"], config["ai"]["prompt"])
+        return AITranslator(config["ai"])
     elif tool == "tencent":
-        return TencentTranslator()
+        return TencentTranslator(config["tencent"])
     elif tool == "youdao":
-        return YouDaoTranslator()
+        return YouDaoTranslator(config["youdao"])
     else:
         logger.error(f"Invalid translator type ! type = {tool}")
         return TranslatorBase()

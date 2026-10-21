@@ -4,8 +4,8 @@ import hashlib
 import json
 import time
 from .translator_base import TranslatorBase
-from .translator_config import get_youdao_translator_config
 from .tencent_language_adjust import language_adjust
+from ..translate_config import TranslateYoudaoConfig
 from ..translator_type import TranslatorType
 
 
@@ -29,11 +29,19 @@ def do_request(url, data):
 
 class YouDaoTranslator(TranslatorBase):
     """ 有道翻译 """
+
+    def __init__(self, config: TranslateYoudaoConfig) -> None:
+        """
+        :param config: translate_config.json 里 youdao 段
+        """
+        self.__url: str = config["url"]
+        self.__app_key: str = config["app_key"]
+        self.__app_secret: str = config["app_secret"]
+
     async def translate(self):
-        youdao_translator_config = get_youdao_translator_config()
-        url = youdao_translator_config.get("url")
-        app_key = youdao_translator_config.get("app_key")
-        app_secret = youdao_translator_config.get("app_secret")
+        url = self.__url
+        app_key = self.__app_key
+        app_secret = self.__app_secret
 
         query_str = ""
         for i in range(len(super()._src_text)):
