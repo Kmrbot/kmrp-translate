@@ -11,7 +11,7 @@ class TranslateAIConfig(TypedDict):
     model: str
     """ai_config.json 里的类型名，例如 deepseek。"""
     prompt: str
-    """发给模型的系统提示。每次翻译只附带这一段和一条原文。"""
+    """发给模型的系统提示。配置文件里按行写成数组，读取时用换行拼成这一段。"""
 
 
 class TranslateTencentConfig(TypedDict):
@@ -66,11 +66,14 @@ class TranslateConfig:
         ai = data["ai"]
         tencent = data["tencent"]
         youdao = data["youdao"]
+        prompt = ai["prompt"]
+        if isinstance(prompt, list):
+            prompt = "\n".join(prompt)
         return {
             "translator": data["translator"],
             "ai": {
                 "model": ai["model"],
-                "prompt": ai["prompt"],
+                "prompt": prompt,
             },
             "tencent": {
                 "secret_id": tencent["secret_id"],
