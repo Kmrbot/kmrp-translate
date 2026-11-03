@@ -4,3 +4,6 @@ from .get_translate_list import get_translate_list  # noqa: F401
 from .clear_translate import clear_translate  # noqa: F401
 from .translate_handler import translate_handler  # noqa: F401
 from .force_translate import force_translate  # noqa: F401
+from .config_page import TranslateConfigPage
+
+TranslateConfigPage.register()
